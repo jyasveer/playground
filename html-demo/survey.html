@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survery Form</title>
+</head>
+
+<body>
+    <center>
+        <form>
+            <h1>Survey Form App</h1>
+            <span>Enter your name:</span>
+            <input type="text" placeholder="Enter your name" name="name">
+            <br><br>
+            <span>Gender</span>
+            <input type="radio" value="1" name="gender"><span>Male</span>
+            <input type="radio" value="2" name="gender"><span>Female</span>
+            <input type="radio" value="3" name="gender"><span>Other</span>
+            <br><br>
+            <span>Age:</span>
+            <select name="age">
+                <option value="-1">Select Age</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+            </select>
+            <br><br>
+            <span>Select Countries:</span>
+            <input type="checkbox" value="c1" name="country"><span>Country 1</span>
+            <input type="checkbox" value="c2" name="country"><span>Country 2</span>
+            <input type="checkbox" value="c3" name="country"><span>Country 3</span>
+            <input type="checkbox" value="c4" name="country"><span>Country 4</span>
+            <input type="checkbox" value="c5" name="country"><span>Country 5</span>
+            <br><br>
+            <span>Please enter your comments in the box below:</span>
+            <br><br>
+            <textarea rows="5" cols="50" placeholder="Please enter your comments here" name="comments"></textarea>
+            <br><br>
+            Email:
+            <input type="email" name="email" id="email">
+            <br><br>
+            Password:
+            <input type="password" name="password" id="password">
+            <br><br>
+            Url:
+            <input type="url" name="url" id="url">
+            <br><br>
+            <button type="submit"">Submit</button>
+        </form>
+    </center>
+    <script src="survey.js"></script>
+</body>
+
+</html>

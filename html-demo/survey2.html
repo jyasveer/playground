@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>Suvey Form</title>
+    </head>
+    <body>
+        <center>
+            <form action="http://www.zyz.xom/formdata">
+                <h2>Please fill up the survery form</h2>
+                Name: <input type="text" name="name" placeholder="Enter your name">
+                <br><br>
+                Gender: 
+                <input type="radio" name="gender" value="male"> Male
+                <input type="radio" name="gender" value="female"> Female
+                <input type="radio" name="gender" value="other"> Other
+                <br><br>
+                Age:
+                <select name="age">
+                    <option value="-1">Select age</option>
+                    <option value="15">15+</option>
+                    <option value="16">16+</option>
+                    <option value="17">17+</option>
+                </select>
+                <br><br>
+                Interest(s):
+                <input type="checkbox" name="interest" value="cycling"> Cycling
+                <input type="checkbox" name="interest" value="singing"> Singing
+                <input type="checkbox" name="interest" value="reading"> Reading
+                <br><br>
+                Comments:
+                <textarea name="comments" cols="40" rows="10" placeholder="Enter your comments"></textarea>
+                <br><br>
+                <button type="submit">Submit</button>
+            </form>
+        </center>
+    </body>
+</html>
+
+

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul></ul>
+</body>
+
+<script>
+    var note = document.querySelector("ul");
+
+    // In the following line, you should include the prefixes
+    // of implementations you want to test.
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    // DON'T use "var indexedDB = ..." if you're not in a function.
+    // Moreover, you may need references to some window.IDB* objects:
+    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+    // (Mozilla has never prefixed these objects, so we don't
+    //  need window.mozIDB*)
+
+    const customerData = [
+        { ssn: "111", name: "Bill", age: 35, email: "bill@company.com" },
+        { ssn: "222", name: "Donna", age: 32, email: "donna@home.org" },
+        { ssn: "333", name: "Abc", age: 35, email: "abc@home.org" },
+        { ssn: "444", name: "Def", age: 32, email: "def@home.org" },
+        { ssn: "555", name: "Bill", age: 35, email: "bill@home.org" },
+    ];
+    const dbName = "the_name";
+
+    var request = indexedDB.open(dbName, 3);
+
+    request.onerror = function (event) {
+        // Handle errors.
+    };
+    request.onupgradeneeded = function (event) {
+        var db = event.target.result;
+
+        // Create an objectStore to hold information about our customers. We're
+        // going to use "ssn" as our key path because it's guaranteed to be
+        // unique - or at least that's what I was told during the kickoff meeting.
+        var objectStore = db.createObjectStore("customers", { keyPath: "ssn" });
+
+        // Create an index to search customers by name. We may have duplicates
+        // so we can't use a unique index.
+        objectStore.createIndex("name", "name", { unique: false });
+
+        // Create an index to search customers by email. We want to ensure that
+        // no two customers have the same email, so use a unique index.
+        objectStore.createIndex("email", "email", { autoIncrement: true, unique: true });
+
+        objectStore.createIndex("name-age", ["name", "age"]);
+
+        // Use transaction oncomplete to make sure the objectStore creation is
+        // finished before adding data into it.
+        objectStore.transaction.oncomplete = function (event) {
+            // Store values in the newly created objectStore.
+            var customerObjectStore = db.transaction("customers", "readwrite").objectStore("customers");
+            customerData.forEach(function (customer) {
+                var addRequest = customerObjectStore.add(customer);
+                addRequest.onsuccess = function (event) {
+                    console.log('user added', event);
+                };
+            });
+
+            customerObjectStore.get('444').onsuccess = function (event) {
+                console.log('user fetched', event);
+            }
+        };
+    };
+
+    request.onsuccess = function (event) {
+        var db = event.target.result;
+        var transaction = db.transaction(["customers"], "readwrite");
+        var objectStore = transaction.objectStore("customers");
+
+        // // Make a request to add our newItem object to the object store
+        // var objectStoreRequest = objectStore.add({ ssn: "777", name: "Donna", age: 32, email: "donna3@home.org" });
+
+        // objectStoreRequest.onsuccess = function (event) {
+        //     console.log('new customer added - ', event.target.result);
+        // };
+
+        var request = objectStore.get("777");
+        request.onerror = function (event) {
+            // Handle errors!
+        };
+        request.onsuccess = function (event) {
+            // Do something with the request.result!
+            console.log("Name for SSN 444 is ", event);
+            console.log('-----------------');
+        };
+
+        var index = objectStore.index("name-age");
+        // Using a normal cursor to grab whole customer record objects
+        index.openCursor().onsuccess = function (event) {
+            var cursor = event.target.result;
+            if (cursor) {
+                // cursor.key is a name, like "Bill", and cursor.value is the whole object.
+                console.log("openCursor() - " + "Name: " + cursor.key + ", SSN: " + cursor.value.ssn + ", email: " + cursor.value.email);
+                cursor.continue();
+            }
+        };
+
+        // Using a key cursor to grab customer record object keys
+        index.openKeyCursor().onsuccess = function (event) {
+            var cursor = event.target.result;
+            if (cursor) {
+                // cursor.key is a name, like "Bill", and cursor.value is the SSN.
+                // No way to directly get the rest of the stored object.
+                console.log("openKeyCursor() - " + "Name: " + cursor.key + ", SSN: " + cursor.primaryKey);
+                cursor.continue();
+            }
+        };
+    };
+</script>
+
+</html>
